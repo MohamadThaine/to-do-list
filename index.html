@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" type="text/css" href="indexStyle.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="firstTwoElements" id="firstTwoElements">
+                <h2 class="title" contenteditable="true">To Do List</h2>
+            </div>
+            <input type="checkbox" id="selectAllCheckBox" class="selectAll">
+            <div class="tasks">
+                <div class="p1" id="p1">
+                </div>
+                <div class="p2" id="p2">
+                </div>
+                <div class="p3" id="p3">
+                </div>
+                <div class="p0" id="p0">
+            </div>
+            <div id="complatedTasks"></div>
+        </div>
+        <div class="empty"></div>
+            <div class="addtask">
+                <input type="text" class="taskBox" id="taskBox" placeholder="Type a new task...">
+                <button class="addTaskBT" onclick="addTask()">Add</button>
+            </div>
+    </body>
+    <script type="module" src="indexScript.js"></script>
+</html>
