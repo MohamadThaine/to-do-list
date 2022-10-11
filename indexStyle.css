@@ -3,6 +3,29 @@
     src: url(fonts/Poppins-Regular.ttf);
 }
 
+.loadingCon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 100vh;
+    background-color: white;
+}
+
+.loading {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 0.5s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -20,6 +43,7 @@
     border-radius: 8px;
     font-weight: bold;
     font-family: 'Poppins';
+    display: none;
 }
 
 .firstTwoElements{
@@ -72,8 +96,6 @@
     border-top: 1px solid #B8DAFC;
     position: relative;
 }
-
-
 
 .tank >:first-child:hover{
     border: 1px solid #ABADBA;
@@ -402,6 +424,11 @@
     line-height: 17px;
     color: #FFF;
     background: #F04B39;
+}
+
+.showMenu > :first-child{
+    text-decoration: none;
+    color: black;
 }
 
 

@@ -1,0 +1,14 @@
+.login{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100px;
+}
+
+.loginBT{
+    margin-top: 30px;
+}
+
+.tasksElements{
+    display: none;
+}

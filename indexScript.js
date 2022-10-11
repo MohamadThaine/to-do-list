@@ -32,7 +32,7 @@ function prepareDeleteBT(){
 async function getTasks(){
    const taskRef = await getDocs(collection(db, "tasks"));
         taskRef.forEach((doc) => {
-        createTask(doc.data().task , doc.data().id ,  doc.data().prioroty)
+        createTask(doc.data().task , doc.data().id ,  doc.data().prioroty , doc.data().completed)
     })
     getLastIDAdded()
 }
@@ -56,14 +56,13 @@ function addTask(){
         return
     }
     getLastIDAdded()
-    createTask(tasksInputBox.value ,lastID + 1 , 'p0')
+    createTask(tasksInputBox.value ,lastID + 1 , 'p0' , false)
     addTasktoDB(lastID + 1 , tasksInputBox.value , 'p0')
     tasksInputBox.value = ""
     
 }
 
-function createTask(taskName , id , prioroty){
-    var tasksBody = document.getElementById(prioroty)
+function createTask(taskName , id , prioroty , complated){
     selectAllCheckBox.style.display = "block"
     var task = document.createElement('div')
     task.id = id
@@ -79,6 +78,7 @@ function createTask(taskName , id , prioroty){
             checkbox.classList.remove('checked')
             document.getElementById(taskPritorayId).appendChild(task)
             selectedTasks = selectedTasks - 1
+            updateTaskProgInDB(id , false)
             deleteDeleteTaskBt()
         }
         else{
@@ -86,6 +86,7 @@ function createTask(taskName , id , prioroty){
             checkbox.classList.add('checked')
             Complatedtask.appendChild(task)
             createDeleteTaskBT()
+            updateTaskProgInDB(id , true)
             selectedTasks = selectedTasks + 1
         }
     })
@@ -119,6 +120,13 @@ function createTask(taskName , id , prioroty){
     menuContener.classList.add('menu')
     createMenu(menuContener , id)
     task.appendChild(menuContener)
+    if(complated){
+        var tasksBody = Complatedtask
+        checkbox.click()
+    }
+    else{
+        var tasksBody = document.getElementById(prioroty)
+    }
     tasksBody.appendChild(task)
 }
 
@@ -129,7 +137,7 @@ function createMenu(Contener , id){
     for(let i = 1 ; i < 4 ; i++){
         createMenuButtons(i , Contener , id)
     }
-    createMenuButtons(0 , Contener)
+    createMenuButtons(0 , Contener, id)
     var deleteBT = document.createElement('button')
     deleteBT.innerHTML = 'Delete'
     deleteBT.classList.add('deleteATaskBT')
@@ -151,12 +159,26 @@ async function addTasktoDB(taskID , taskName , P){
         const docRef = await addDoc(collection(db, "tasks"), {
           id: taskID, 
           prioroty: P,
-          task: taskName
+          task: taskName,
+          completed : false
         });
         console.log("Document written with ID: ", docRef.id);
       } catch (error) {
         console.error("Error adding document: ", error);
       }
+}
+
+async function updateTaskProgInDB(taskID ,complated){
+    var docID
+    const q = query(collection(db, "tasks"), where("id", "==", parseInt(taskID)));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+        docID = doc.id
+    }); 
+    const taskRef = doc(db, "tasks", docID);
+    await updateDoc(taskRef, {
+        completed : complated
+      });
 }
 
 
@@ -165,10 +187,13 @@ function changePiratory(e){
     if(e.parentNode.parentNode.parentNode.id == 'complatedTasks'){
         return
     }
-   var newPritoryID = e.name.substring(e.name.indexOf('p') , 3)
-   var taskID = e.name.substring(0 , e.name.indexOf('p'))
+    console.log(e)
+   var newPritoryID = e.name.substring(e.name.indexOf('p') , e.name.indexOf('p') + 2)
+   var taskID = e.parentNode.parentNode.id
    var newPritory = document.getElementById(newPritoryID)
    var task = document.getElementById(taskID)
+   console.log(newPritoryID)
+   console.log(taskID)
    task.setAttribute('name' , taskID + newPritoryID)
    newPritory.appendChild(task)
    var taskMenu = task.children[5]
@@ -302,7 +327,6 @@ function selectText(node) {
 
 function createDeleteTaskBT(){
     if(selectedTasks != 0){
-        console.log(selectedTasks)
         return
     }
     var contener = document.getElementById('firstTwoElements')
@@ -311,7 +335,6 @@ function createDeleteTaskBT(){
 
 function deleteDeleteTaskBt(){
     if(selectedTasks != 0){
-        console.log(selectedTasks)
         return
     }
     var contener = document.getElementById('firstTwoElements')
@@ -375,10 +398,20 @@ function getDragableElementsInContener(Contener){
         })
     })
 }
-
+let checking = false
 function checkAllTasks(){
+    checking = !checking
     var allTasks = document.querySelectorAll('.task')
     allTasks.forEach(task => {
-        task.children[0].click();
+        if(checking){
+            if(!task.classList.contains("selectedTask")){
+                task.children[0].click();
+            }  
+        }
+        else{
+            if(task.classList.contains("selectedTask")){
+                task.children[0].click();
+            }  
+        } 
     })
 }
