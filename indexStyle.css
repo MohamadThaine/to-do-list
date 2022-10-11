@@ -74,16 +74,6 @@
 }
 
 
-.task >:first-child{
-    border: 1px solid #D5D6DD;
-    border-radius: 2px;
-    background: #FFF;
-    box-shadow: inset 1px 1px 3px rgb(0 0 0 / 6%);
-    cursor: pointer;
-    width: 13px;
-    height: 13px;
-    align-self: center;
-}
 
 .tank >:first-child:hover{
     border: 1px solid #ABADBA;
@@ -414,11 +404,6 @@
     background: #F04B39;
 }
 
-.task >:first-child.checked{
-    background: #FFF 
-    url(data:image/gif;base64,R0lGODlhCgAKAMQaAFiYNtftzMXktIjJZrLcnOz25mCnO2KqPOb038Tks7vgqH3EV06IMFmaN2++RtjtzVueOLfeonTATLHcm+336F+kOmy8QvL576jYj0uBLgAAAAAAAAAAAAAAAAAAAAAAACH5BAEAABoALAAAAAAKAAoAAAUtoCaOooCRY2FdqDgQrSYYLEpByrgE7jFiGcAjkYmMEJJgo9LCMDKTWMBRE4UAADs=) 
-    no-repeat 2px 1px;
-}
 
 @media only screen and (max-width: 1050px) {
     .toRight{

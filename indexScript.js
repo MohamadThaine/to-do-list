@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.11.0/firebase-app.js";
-import { getFirestore, collection, getDocs , addDoc , setDoc   } from 'https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js';
+import { getFirestore, collection, getDocs , addDoc , setDoc , query, orderBy, limit , where , doc, updateDoc , deleteDoc  } from 'https://www.gstatic.com/firebasejs/9.11.0/firebase-firestore.js';
 const firebaseConfig = {
   apiKey: "AIzaSyDddyG3XnPPaKDXr1xtO66llOs2DSVUyD4",
   authDomain: "to-do-list-c4037.firebaseapp.com",
@@ -9,21 +9,14 @@ const firebaseConfig = {
   appId: "1:512583339372:web:95ceda490ccbd0cd993749",
   measurementId: "G-MW003GRGZD"
 };
-
+let lastID = 0;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-console.log(db)
-
-var tasksBody = document.getElementById('p0')
 var tasksInputBox = document.getElementById('taskBox')
 var Complatedtask = document.getElementById('complatedTasks')
 var selectAllCheckBox = document.getElementById('selectAllCheckBox')
-let editFirstClicked = false
 var editingTask
-let id = 0;
-let isEditing = false
 let isMenuOn = false
-var prevMenu
 let selectedTasks = 0
 var deleteBT
 window.onload = prepareDeleteBT()
@@ -33,6 +26,24 @@ function prepareDeleteBT(){
     deleteBT.classList.add('deleteTaskBT')
     deleteBT.innerHTML = "Delete Complated Tasks"
     deleteBT.onclick = deleteAllComplatedTasks
+    getTasks()
+}
+
+async function getTasks(){
+   const taskRef = await getDocs(collection(db, "tasks"));
+        taskRef.forEach((doc) => {
+        createTask(doc.data().task , doc.data().id ,  doc.data().prioroty)
+    })
+    getLastIDAdded()
+}
+
+async function getLastIDAdded(){
+    const taskRef = collection(db, "tasks")
+    const q = query(taskRef, orderBy("id" , 'desc'), limit(1));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+        lastID = doc.data().id
+    });
 }
 
 selectAllCheckBox.addEventListener('click' , () => {
@@ -44,15 +55,19 @@ function addTask(){
     if(tasksInputBox.value == ""){
         return
     }
-    createTask(tasksInputBox.value)
+    getLastIDAdded()
+    createTask(tasksInputBox.value ,lastID + 1 , 'p0')
+    addTasktoDB(lastID + 1 , tasksInputBox.value , 'p0')
     tasksInputBox.value = ""
+    
 }
 
-function createTask(taskName){
+function createTask(taskName , id , prioroty){
+    var tasksBody = document.getElementById(prioroty)
     selectAllCheckBox.style.display = "block"
     var task = document.createElement('div')
     task.id = id
-    task.setAttribute('name' , id + 'p0')
+    task.setAttribute('name' , id + prioroty)
     task.classList.add('dragable')
     task.classList.add('task')
     var checkbox = document.createElement('input')
@@ -69,7 +84,6 @@ function createTask(taskName){
         else{
             task.classList.add('selectedTask')
             checkbox.classList.add('checked')
-            console.log(Complatedtask)
             Complatedtask.appendChild(task)
             createDeleteTaskBT()
             selectedTasks = selectedTasks + 1
@@ -103,19 +117,17 @@ function createTask(taskName){
     task.appendChild(menuBT)
     var menuContener = document.createElement('div')
     menuContener.classList.add('menu')
-    createMenu(menuContener)
+    createMenu(menuContener , id)
     task.appendChild(menuContener)
     tasksBody.appendChild(task)
-    id++
-    addTasktoDB(id , taskNameP.innerHTML , 'p0')
 }
 
-function createMenu(Contener){
+function createMenu(Contener , id){
     var p = document.createElement('p')
     p.innerHTML = "Priority:"
     Contener.appendChild(p)
     for(let i = 1 ; i < 4 ; i++){
-        createMenuButtons(i , Contener)
+        createMenuButtons(i , Contener , id)
     }
     createMenuButtons(0 , Contener)
     var deleteBT = document.createElement('button')
@@ -123,6 +135,15 @@ function createMenu(Contener){
     deleteBT.classList.add('deleteATaskBT')
     deleteBT.onclick = function() { deleteTask(deleteBT) }
     Contener.appendChild(deleteBT)
+}
+
+function createMenuButtons(i , Contener , id){
+    var pBT = document.createElement('button')
+    pBT.classList.add("p" + i + "BT")
+    pBT.setAttribute("name" , id + "p" + i + "BT")
+    pBT.innerHTML = i
+    pBT.onclick = function() { changePiratory(pBT) }
+    Contener.appendChild(pBT)
 }
 
 async function addTasktoDB(taskID , taskName , P){
@@ -138,26 +159,17 @@ async function addTasktoDB(taskID , taskName , P){
       }
 }
 
-function createMenuButtons(i , Contener){
-    var pBT = document.createElement('button')
-    pBT.classList.add("p" + i + "BT")
-    pBT.setAttribute("name" , id + "p" + i + "BT")
-    pBT.innerHTML = i
-    pBT.onclick = function() { changePiratory(pBT) }
-    Contener.appendChild(pBT)
-}
+
 
 function changePiratory(e){
-    console.log(e.parentNode.parentNode.parentNode)
     if(e.parentNode.parentNode.parentNode.id == 'complatedTasks'){
         return
     }
    var newPritoryID = e.name.substring(e.name.indexOf('p') , 3)
-   var taskID = e.name.substring(0 , 1)
+   var taskID = e.name.substring(0 , e.name.indexOf('p'))
    var newPritory = document.getElementById(newPritoryID)
    var task = document.getElementById(taskID)
-   task.setAttribute('name' , id + newPritoryID)
-   console.log(task.getAttribute('name'))
+   task.setAttribute('name' , taskID + newPritoryID)
    newPritory.appendChild(task)
    var taskMenu = task.children[5]
    if(isMenuOn){
@@ -165,6 +177,21 @@ function changePiratory(e){
         isMenuOn = false
     }
     e.classList.add('active')
+    changePiratoryInDB(taskID , newPritoryID)
+}
+
+async function changePiratoryInDB(taskID , newPritoryID){
+    var docID
+    const q = query(collection(db, "tasks"), where("id", "==", parseInt(taskID)));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+        docID = doc.id
+        console.log(doc.id)
+    }); 
+    const taskRef = doc(db, "tasks", docID);
+    await updateDoc(taskRef, {
+        prioroty: newPritoryID
+      });
 }
 
 function deleteTask(e){
@@ -175,6 +202,18 @@ function deleteTask(e){
     if(allTasks.length == 0){
         selectAllCheckBox.style.display = 'none'
     }
+    deleteTaskInDB(task)
+}
+
+async function deleteTaskInDB(task){
+    var docID
+    const q = query(collection(db, "tasks"), where("id", "==", parseInt(task.id)));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+        docID = doc.id
+    });
+    await deleteDoc(doc(db, "tasks", docID));
+    getLastIDAdded()
 }
 
 document.getElementById("taskBox")
@@ -191,33 +230,43 @@ function editName(e){
     var taskId = bt.substring(0,bt.indexOf('edit'))
     editingTask = document.getElementById(taskId)
     var taskName = editingTask.children[2]
-    console.log(taskName.contentEditable)
     if(taskName.contentEditable == "true"){
-        saveNewName(taskName ,e , true)
+        saveNewName(taskName ,e , true , taskId)
         return
     }
-    console.log(e)
     taskName.contentEditable  = "true"
     selectText(taskName)
-    taskName.addEventListener("keyup", function() { saveNewName(taskName , e) })
+    taskName.addEventListener("keyup", function() { saveNewName(taskName , e , false , taskId) })
     taskName.addEventListener('focusout', () => { 
-        setTimeout(() => {saveNewName(taskName , e , true)} , 100)
+        setTimeout(() => {saveNewName(taskName , e , true , taskId)} , 100)
         })
 }
 
-function saveNewName(taskName ,bt , buttonclicked){
-    if (buttonclicked || event.keyCode === 13) {
-        if(taskName.textContent)
-        {
-            alert('name can not be empty')
-            return
-        }
+function saveNewName(taskName ,bt , buttonclicked , taskId){
+    if (buttonclicked || event.keyCode === 13 && taskName.textContent != '') {
         taskName.contentEditable  = "false"
         taskName.textContent = taskName.textContent.replace('\n' , "")
-        bt.classList.remove('save')}
+        bt.classList.remove('save')
+        saveNewNameInDB(taskName.textContent , taskId)}
+    else{
+        return
+    }
     taskName.removeEventListener("keyup", function() { saveNewName }) 
     taskName.removeEventListener('focusout', function() { saveNewName })
-    console.log(bt)
+}
+
+async function saveNewNameInDB(newName , taskId){
+    console.log(taskId)
+    var docID
+    const q = query(collection(db, "tasks"), where("id", "==", parseInt(taskId)));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+        docID = doc.id
+    }); 
+    const taskRef = doc(db, "tasks", docID);
+    await updateDoc(taskRef, {
+        task: newName
+      });
 }
 
 function showMenu(e){
@@ -273,6 +322,7 @@ function deleteAllComplatedTasks(){
     var selectedTasksOb = document.querySelectorAll('.selectedTask');
     selectedTasksOb.forEach(task => {
         task.remove();
+        deleteTaskInDB(task)
       });
     selectedTasks = 0
     selectAllCheckBox.click()
