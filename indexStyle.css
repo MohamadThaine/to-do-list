@@ -108,13 +108,15 @@
     position: relative;
 }
 
+.task > *{
+    margin-left: 20px;
+}
+
+
 .taskName{
     width: 60%;
     word-break: break-all;
-}
-
-.task > *{
-    margin-left: 20px;
+    margin-left: 40px;
 }
 
 .hidden{
@@ -157,8 +159,7 @@
 
 
 
-.task button{
-    height: fit-content;
+.task .hidden{
     align-self: center;
 }
 
@@ -172,6 +173,10 @@
 .addtask > :first-child{
     width: 90%;
     height: 15px;
+}
+
+.addtask > *{
+    margin-left: 5px;
 }
 
 .taskName[contenteditable="true"]{
@@ -199,7 +204,23 @@
     border-width: 0 1px;
 }
 
+.dragBT::before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 4px;
+    width: 3px;
+    height: 100%;
+    background: #F4FAFF;
+}
+
 .dragBT{
+    position: relative;
+    left: 15px;
+    z-index: 10;
+    box-sizing: border-box;
+    width: 13px;
+    height: 29px;
     border: 1px solid #F4FAFF;
     border-width: 6px 1px 7px;
     background: #D6EAFE;
@@ -213,6 +234,16 @@
     opacity: 1;
 }
 
+.dragBT::after{
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    border-top: 2px solid #F4FAFF;
+    border-bottom: 2px solid #F4FAFF;
+}
 
 .menu{
     height: 31%;
@@ -389,7 +420,7 @@
     background: #AAA;
 }
 
-.p0BT.active{
+.active{
     outline: 1px solid #777;
 }
 
@@ -403,6 +434,7 @@
     color: #FFF;
     background: #75BE2C;
 }
+
 
 .p2BT{
     border: 1px solid #FFF;
@@ -425,6 +457,7 @@
     color: #FFF;
     background: #F04B39;
 }
+
 
 .showMenu > :first-child{
     text-decoration: none;

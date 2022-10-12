@@ -12,6 +12,7 @@ const firebaseConfig = {
 let lastID = 0;
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+var session = document.cookie;
 var tasksInputBox = document.getElementById('taskBox')
 var Complatedtask = document.getElementById('complatedTasks')
 var selectAllCheckBox = document.getElementById('selectAllCheckBox')
@@ -26,14 +27,15 @@ function prepareDeleteBT(){
     deleteBT.classList.add('deleteTaskBT')
     deleteBT.innerHTML = "Delete Complated Tasks"
     deleteBT.onclick = deleteAllComplatedTasks
-    getTasks()
+    getTasks(session)
 }
 
-async function getTasks(){
-   const taskRef = await getDocs(collection(db, "tasks"));
-        taskRef.forEach((doc) => {
-        createTask(doc.data().task , doc.data().id ,  doc.data().prioroty , doc.data().completed)
-    })
+export async function getTasks(userID){
+    const q = query(collection(db, "tasks"), where("userID", "==", userID));
+    const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+             createTask(doc.data().task , doc.data().id ,  doc.data().prioroty , doc.data().completed)
+    }); 
     getLastIDAdded()
 }
 
@@ -57,7 +59,7 @@ function addTask(){
     }
     getLastIDAdded()
     createTask(tasksInputBox.value ,lastID + 1 , 'p0' , false)
-    addTasktoDB(lastID + 1 , tasksInputBox.value , 'p0')
+    addTasktoDB(lastID + 1 , tasksInputBox.value , 'p0' , session)
     tasksInputBox.value = ""
     
 }
@@ -93,7 +95,7 @@ function createTask(taskName , id , prioroty , complated){
     task.appendChild(checkbox)
     var dragBT = document.createElement('button')
     dragBT.setAttribute("name" , id + "drag")
-    dragBT.innerHTML = "drag"
+    dragBT.innerHTML = ""
     dragBT.addEventListener('mousedown' , () => {
         dragTask(dragBT)
     })
@@ -154,13 +156,14 @@ function createMenuButtons(i , Contener , id){
     Contener.appendChild(pBT)
 }
 
-async function addTasktoDB(taskID , taskName , P){
+async function addTasktoDB(taskID , taskName , P , userId){
     try {
         const docRef = await addDoc(collection(db, "tasks"), {
           id: taskID, 
           prioroty: P,
           task: taskName,
-          completed : false
+          completed : false,
+          userID : userId
         });
         console.log("Document written with ID: ", docRef.id);
       } catch (error) {
@@ -187,13 +190,11 @@ function changePiratory(e){
     if(e.parentNode.parentNode.parentNode.id == 'complatedTasks'){
         return
     }
-    console.log(e)
    var newPritoryID = e.name.substring(e.name.indexOf('p') , e.name.indexOf('p') + 2)
    var taskID = e.parentNode.parentNode.id
    var newPritory = document.getElementById(newPritoryID)
    var task = document.getElementById(taskID)
-   console.log(newPritoryID)
-   console.log(taskID)
+   changePiratoryBTstyle(e , task)
    task.setAttribute('name' , taskID + newPritoryID)
    newPritory.appendChild(task)
    var taskMenu = task.children[5]
@@ -201,7 +202,6 @@ function changePiratory(e){
         taskMenu.classList.remove('showMenu')
         isMenuOn = false
     }
-    e.classList.add('active')
     changePiratoryInDB(taskID , newPritoryID)
 }
 
@@ -217,6 +217,14 @@ async function changePiratoryInDB(taskID , newPritoryID){
     await updateDoc(taskRef, {
         prioroty: newPritoryID
       });
+}
+
+function changePiratoryBTstyle(newBT , task){
+    var oldPriraty = task.parentNode.id
+    console.log(oldPriraty)
+    var oldBTName = task.children[5].querySelectorAll('.' + oldPriraty + 'BT')
+    oldBTName[0].classList.remove('active')
+    newBT.classList.add('active')
 }
 
 function deleteTask(e){

@@ -1,12 +1,69 @@
+@font-face {
+    font-family: 'Poppins';
+    src: url(fonts/Poppins-Regular.ttf);
+}
+
 .login{
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 100px;
+    height: 120px;
+}
+
+.login > *{
+    margin-bottom: -20px;
+}
+
+.loginBT::before{
+    border-radius: 4px;
+    position: absolute;
+    background-color: white;
+    left: 2px;
+    top: 3px;
+    align-self: center;
+    width: 20%;
+    height: 90%;
+    content: "";
+    z-index: 0;
 }
 
 .loginBT{
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
     margin-top: 30px;
+    font-family: 'Poppins';
+    background-color: #4285F4;
+    border: none;
+    width: fit-content;
+    padding-right: 10px;
+    height: 50%;
+    cursor: pointer;
+    color: white;
+    font-size: large;
+}
+
+
+.loginBT:hover{
+    background-color: #318CE7;
+}
+
+.loginBT:active{
+    background-color: #0047AB;
+}
+
+.googleIcon{
+    margin-right: 50px;
+    margin-left: 13px;
+    width: 30px;
+    height: 30px;
+    z-index: 10;
+}
+
+.loginBT >:last-child{
+    margin-right: 20px;
+    font-weight: 600;
 }
 
 .tasksElements{
