@@ -67,7 +67,7 @@
   position: relative;
   width: fit-content;
   height: fit-content;
-  top: 3vh;
+  top: 1.8vw;
   right: 3.5vw;
   background-color: transparent;
   border: none;
@@ -87,7 +87,7 @@
 
 .selectAll {
   display: none;
-  margin-left: 20px;
+  margin-left: 30px;
 }
 
 .tasks {
@@ -102,9 +102,8 @@
   position: relative;
 }
 
-.tank > :first-child:hover {
-  border: 1px solid #abadba;
-  box-shadow: inset 1px 1px 3px rgb(0 0 0 / 12%);
+.task > :first-child{
+  margin-left: 30px;
 }
 
 .empty {
@@ -114,7 +113,7 @@
 }
 
 .task > * {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 .taskName {
@@ -467,11 +466,11 @@
 }
 
 
+
 @media only screen and (max-width: 1560px) {
   .showMenu {
     margin-left: 57%;
-    height: 40%;
-
+    height: 40%; 
   }
   .menu > * {
     font-size: small;
@@ -496,9 +495,6 @@
   }
 }
 
-
-
-
 @media only screen and (max-width: 680px) {
   .toRight {
     margin-left: 0%;
@@ -518,11 +514,6 @@
   }
   .tasks {
     max-height: 80vh;
-  }
-}
-@media only screen and (max-height: 1320px) {
-  .deleteTaskBT {
-    top: 2vh;
   }
 }
 @media only screen and (max-height: 648px) {
