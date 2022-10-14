@@ -31,11 +31,14 @@ var toDoListTitle = document.getElementById('title')
 var tasksInputBox = document.getElementById("taskBox");
 var Complatedtask = document.getElementById("complatedTasks");
 var selectAllCheckBox = document.getElementById("selectAllCheckBox");
+var addTaskBT = document.getElementById('addTaskBT')
 var editingTask;
 let isMenuOn = false;
 let selectedTasks = 0;
 var deleteBT;
 window.onload = prepareDeleteBT();
+
+addTaskBT.click = addTask
 
 toDoListTitle.addEventListener('focusout' , () => {
   updateTitleInDB(toDoListTitle.textContent , session)
@@ -382,6 +385,15 @@ function showMenu(e) {
   if (!isMenuOn) {
     taskMenu.classList.add("showMenu");
     isMenuOn = true;
+    document.addEventListener('mousedown' , function handler() {
+      setTimeout(() => {
+        if(isMenuOn)
+        {
+          taskMenu.classList.remove("showMenu");
+          isMenuOn = false;
+        }
+      }, 120);
+    } , {once: true})
   } else {
     taskMenu.classList.remove("showMenu");
     isMenuOn = false;
