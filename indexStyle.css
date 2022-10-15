@@ -192,6 +192,8 @@
   border: 1px solid #d5d6dd;
   box-shadow: inset 1px 1px 3px rgb(0 0 0 / 6%);
   transition: border 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  color: black;
 }
 
 .task:before,
