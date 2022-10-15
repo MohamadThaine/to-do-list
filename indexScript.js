@@ -41,7 +41,13 @@ window.onload = prepareDeleteBT();
 addTaskBT.click = addTask
 
 toDoListTitle.addEventListener('focusout' , () => {
-  updateTitleInDB(toDoListTitle.textContent , session)
+  if(toDoListTitle.textContent != ''){
+    updateTitleInDB(toDoListTitle.textContent , session)
+  }
+  else{
+    alert('title can not be empty')
+    getTitleFromDB(session)
+  }
 })
 
 async function getTitleFromDB(userID){
