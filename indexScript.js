@@ -148,6 +148,9 @@ function createTask(taskName, id, prioroty, complated) {
       selectedTasks = selectedTasks - 1;
       updateTaskProgInDB(id, false);
       deleteDeleteTaskBt();
+      if(selectedTasks < document.querySelectorAll('.task').length){
+        selectAllCheckBox.checked = false;
+      }
     } else {
       task.classList.add("selectedTask");
       checkbox.classList.add("checked");
@@ -155,6 +158,9 @@ function createTask(taskName, id, prioroty, complated) {
       createDeleteTaskBT();
       updateTaskProgInDB(id, true);
       selectedTasks = selectedTasks + 1;
+      if(selectedTasks == document.querySelectorAll('.task').length){
+        selectAllCheckBox.checked = true;
+      }
     }
   });
   task.appendChild(checkbox);
@@ -198,6 +204,10 @@ function createTask(taskName, id, prioroty, complated) {
     var tasksBody = document.getElementById(prioroty);
   }
   tasksBody.appendChild(task);
+}
+
+function checkBoxhandler(){
+  
 }
 
 function createMenu(Contener, id , prioroty) {
@@ -450,7 +460,10 @@ function deleteAllComplatedTasks() {
   });
   selectedTasks = 0;
   selectAllCheckBox.click();
-  selectAllCheckBox.style.display = "none";
+  var tasksNum = document.querySelectorAll(".task");
+  if(taskName.length == 0){
+    selectAllCheckBox.style.display = "none";
+  }
   deleteDeleteTaskBt();
 }
 
