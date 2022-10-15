@@ -459,9 +459,9 @@ function deleteAllComplatedTasks() {
     deleteTaskInDB(task);
   });
   selectedTasks = 0;
-  selectAllCheckBox.click();
   var tasksNum = document.querySelectorAll(".task");
-  if(taskName.length == 0){
+  selectAllCheckBox.checked = false
+  if(tasksNum.length == 0){
     selectAllCheckBox.style.display = "none";
   }
   deleteDeleteTaskBt();
