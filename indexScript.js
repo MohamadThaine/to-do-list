@@ -45,6 +45,7 @@ toDoListTitle.addEventListener('focusout' , () => {
     updateTitleInDB(toDoListTitle.textContent , session)
   }
   else{
+
     alert('title can not be empty')
     getTitleFromDB(session)
   }
@@ -188,7 +189,7 @@ function createTask(taskName, id, prioroty, complated) {
   task.appendChild(menuBT);
   var menuContener = document.createElement("div");
   menuContener.classList.add("menu");
-  createMenu(menuContener, id);
+  createMenu(menuContener, id, prioroty);
   task.appendChild(menuContener);
   if (complated) {
     var tasksBody = Complatedtask;
@@ -199,14 +200,14 @@ function createTask(taskName, id, prioroty, complated) {
   tasksBody.appendChild(task);
 }
 
-function createMenu(Contener, id) {
+function createMenu(Contener, id , prioroty) {
   var p = document.createElement("p");
   p.innerHTML = "Priority:";
   Contener.appendChild(p);
   for (let i = 1; i < 4; i++) {
-    createMenuButtons(i, Contener, id);
+    createMenuButtons(i, Contener, id , prioroty);
   }
-  createMenuButtons(0, Contener, id);
+  createMenuButtons(0, Contener, id , prioroty);
   var deleteBT = document.createElement("button");
   deleteBT.innerHTML = "Delete";
   deleteBT.classList.add("deleteATaskBT");
@@ -216,11 +217,14 @@ function createMenu(Contener, id) {
   Contener.appendChild(deleteBT);
 }
 
-function createMenuButtons(i, Contener, id) {
+function createMenuButtons(i, Contener, id , prioroty) {
   var pBT = document.createElement("button");
   pBT.classList.add("p" + i + "BT");
   pBT.setAttribute("name", id + "p" + i + "BT");
   pBT.innerHTML = i;
+  if(i == prioroty.substring(1 , 2)){
+    pBT.classList.add('active')
+  }
   pBT.onclick = function () {
     changePiratory(pBT);
   };
